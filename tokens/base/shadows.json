@@ -1,0 +1,35 @@
+{
+  "shadow": {
+    "color": {
+      "$value": "0 0 0",
+      "$type": "color",
+      "$description": "RGB values for shadow color"
+    },
+    "opacity": {
+      "$value": "0.08",
+      "$type": "number",
+      "$description": "Shadow opacity — light mode"
+    },
+    "key": {
+      "xs": { "$value": "0px 1px 4px 0px",  "$type": "shadow", "$description": "Key light XS" },
+      "sm": { "$value": "0px 2px 8px 0px",  "$type": "shadow", "$description": "Key light SM" },
+      "md": { "$value": "0px 3px 12px 0px", "$type": "shadow", "$description": "Key light MD" },
+      "lg": { "$value": "0px 4px 16px 0px", "$type": "shadow", "$description": "Key light LG" },
+      "xl": { "$value": "0px 2px 8px 0px",  "$type": "shadow", "$description": "Key light XL" }
+    },
+    "ambient": {
+      "xs": { "$value": "0px 2px 8px 0px",  "$type": "shadow", "$description": "Ambient light XS" },
+      "sm": { "$value": "0px 3px 12px 0px", "$type": "shadow", "$description": "Ambient light SM" },
+      "md": { "$value": "0px 4px 16px 0px", "$type": "shadow", "$description": "Ambient light MD" },
+      "lg": { "$value": "0px 5px 20px 0px", "$type": "shadow", "$description": "Ambient light LG" },
+      "xl": { "$value": "0px 6px 24px 0px", "$type": "shadow", "$description": "Ambient light XL" }
+    },
+    "preset": {
+      "xs": { "$value": "surface",          "$type": "shadow", "$description": "Cards, panels — surface level elements" },
+      "sm": { "$value": "non-modal",        "$type": "shadow", "$description": "Non-modal elements" },
+      "md": { "$value": "sticky",           "$type": "shadow", "$description": "Sticky elements" },
+      "lg": { "$value": "non-modal-sticky", "$type": "shadow", "$description": "Non-modal elements on sticky surfaces" },
+      "xl": { "$value": "modal",            "$type": "shadow", "$description": "Modal elements" }
+    }
+  }
+}
