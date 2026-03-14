@@ -42,7 +42,7 @@ const PRESETS = [
   },
 ];
 
-function ShadowRow({ name, label, description, key: keyVal, ambient }) {
+function ShadowRow({ name, label, description, keyLight: keyVal, ambient }) {
   const [copied, setCopied] = useState(false);
   const tokenName = `shadow.${name}`;
   const boxShadow = `${keyVal} ${SHADOW_COLOR}, ${ambient} ${SHADOW_COLOR}`;
