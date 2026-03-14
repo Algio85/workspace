@@ -5,7 +5,7 @@ const theme = create({
   base: 'light',
   brandTitle: ' ',
   brandUrl: '/',
-  brandImage: '/Dao.svg',
+  brandImage: '/Tao.svg',
   brandTarget: '_self',
 });
 
