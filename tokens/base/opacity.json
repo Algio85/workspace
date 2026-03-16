@@ -1,0 +1,14 @@
+{
+  "opacity": {
+    "0":   { "$value": "0",    "$type": "number", "$description": "Fully transparent" },
+    "8":   { "$value": "0.08", "$type": "number", "$description": "Hover overlays" },
+    "12":  { "$value": "0.12", "$type": "number", "$description": "Selected states" },
+    "16":  { "$value": "0.16", "$type": "number", "$description": "Active/pressed" },
+    "24":  { "$value": "0.24", "$type": "number", "$description": "Disabled borders" },
+    "32":  { "$value": "0.32", "$type": "number", "$description": "Disabled backgrounds" },
+    "48":  { "$value": "0.48", "$type": "number", "$description": "Medium overlays" },
+    "64":  { "$value": "0.64", "$type": "number", "$description": "Strong overlays" },
+    "80":  { "$value": "0.80", "$type": "number", "$description": "Near opaque" },
+    "100": { "$value": "1",    "$type": "number", "$description": "Fully opaque" }
+  }
+}
