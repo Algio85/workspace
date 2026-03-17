@@ -19,8 +19,45 @@ const TOKEN_FILES = [
   { file: 'tokens/semantic/states.json',   collection: 'Semantic/States',   description: 'Interactive state tokens' },
 ];
 
+// Load shades for resolving references
+const shades = JSON.parse(fs.readFileSync(path.join(root, 'tokens/base/shades.json'), 'utf8'));
+
+// Resolve a {color.shade.palette-1.1} reference against primitives
+function resolveRef(value, primitives) {
+  if (typeof value !== 'string') return value;
+  const match = value.match(/^\{(.+)\}$/);
+  if (!match) return value;
+  const parts = match[1].split('.');
+  let node = primitives;
+  for (const part of parts) {
+    if (!node || typeof node !== 'object') return value;
+    node = node[part];
+  }
+  if (node && typeof node === 'object' && 'value' in node) return node.value;
+  if (node && typeof node === 'object' && '$value' in node) return node.$value;
+  return value;
+}
+
+// Recursively resolve all token values
+function resolveTokens(obj, primitives) {
+  const result = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val && typeof val === 'object' && ('$value' in val || 'value' in val)) {
+      const raw = val.$value !== undefined ? val.$value : val.value;
+      const resolved = resolveRef(raw, primitives);
+      result[key] = Object.assign({}, val, { value: resolved, $value: resolved });
+    } else if (val && typeof val === 'object') {
+      result[key] = resolveTokens(val, primitives);
+    } else {
+      result[key] = val;
+    }
+  }
+  return result;
+}
+
 const bundle = TOKEN_FILES.map(({ file, collection, description }) => {
-  const tokens = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+  let tokens = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+  tokens = resolveTokens(tokens, shades);
   return { file, collection, description, tokens };
 });
 
