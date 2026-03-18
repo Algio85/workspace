@@ -37,17 +37,28 @@ Each style has 3 weights: **light** (300), **regular** (400), **bold** (700).
 
 ---
 
-### Updating the type scale
+### How type styles relate to variables
 
-Type styles reference the typography scale tokens. If you change the scale:
+Type styles and variables are **two separate concepts** in Figma, and they are not linked to each other.
+
+The primitive size values (e.g. \`typography/size/xxxl = 33\`) exist as **Variables** in the \`Typography\` collection — raw numbers with no semantic intent attached. They are a lookup table, nothing more.
+
+The composed styles (e.g. \`text/display/bold = { fontSize: 33, fontWeight: 700, lineHeight: 1.1 }\`) exist as **Text Styles** — static definitions with baked-in values. Figma has no variable type for typography composites, so font size, weight, and line height **cannot be bound to a variable** inside a Text Style. The value is copied in at push time, not referenced.
+
+This means the two layers are connected only in the token source files. \`tokens/semantic/typography.json\` is the only place where the full semantic picture exists end-to-end.
+
+> **Practical implication:** if the type scale changes, updating \`tokens/base/typography.json\` alone is not enough. You also need to re-run **Tao plugin → Styles → Push All Styles** to resync the Text Styles in Figma with the new values.
+
+---
+
+### Updating the type scale
 
 1. Go to **Foundations / Typography**
 2. Adjust base size and ratio until you're happy
 3. Click **Export tokens.json** — copies the JSON to clipboard
 4. Paste it into \`tokens/base/typography.json\`
-5. The type styles will reflect the new scale on next Storybook reload
-
-> The size values in this story are resolved from \`tokens/base/typography.json\` — keeping that file up to date is the source of truth for the entire type system.
+5. Rebuild the plugin bundle: \`node scripts/build-plugin.js\`
+6. In Figma, open the Tao plugin → **Styles** tab → **Push All Styles**
 
 Click any row to copy the token name to clipboard.
         `.trim(),

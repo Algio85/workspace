@@ -19,10 +19,8 @@ const TOKEN_FILES = [
   { file: 'tokens/semantic/states.json',   collection: 'Semantic/States',   description: 'Interactive state tokens' },
 ];
 
-// Load shades for resolving references
 const shades = JSON.parse(fs.readFileSync(path.join(root, 'tokens/base/shades.json'), 'utf8'));
 
-// Resolve a {color.shade.palette-1.1} reference against primitives
 function resolveRef(value, primitives) {
   if (typeof value !== 'string') return value;
   const match = value.match(/^\{(.+)\}$/);
@@ -38,7 +36,6 @@ function resolveRef(value, primitives) {
   return value;
 }
 
-// Recursively resolve all token values
 function resolveTokens(obj, primitives) {
   const result = {};
   for (const [key, val] of Object.entries(obj)) {
@@ -61,6 +58,14 @@ const bundle = TOKEN_FILES.map(({ file, collection, description }) => {
   return { file, collection, description, tokens };
 });
 
+const typographyTokens = JSON.parse(
+  fs.readFileSync(path.join(root, 'tokens/semantic/typography.json'), 'utf8')
+);
+
+const shadowTokens = JSON.parse(
+  fs.readFileSync(path.join(root, 'tokens/base/shadows.json'), 'utf8')
+);
+
 const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -71,7 +76,14 @@ const html = `<!DOCTYPE html>
     .header { padding: 16px; border-bottom: 1px solid #e5e5e5; }
     h1 { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 4px; }
     .header p { font-size: 11px; color: #888; }
-    .collections { padding: 12px 16px; border-bottom: 1px solid #e5e5e5; max-height: 320px; overflow-y: auto; }
+    .tabs { display: flex; border-bottom: 1px solid #e5e5e5; }
+    .tab { flex: 1; padding: 9px 0; font-size: 11px; font-weight: 500; color: #888; text-align: center; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .tab.active { color: #2563EB; border-bottom-color: #2563EB; }
+    .tab-badge { display: none; font-size: 9px; font-weight: 600; background: #ef4444; color: #fff; border-radius: 10px; padding: 1px 5px; line-height: 1.4; }
+    .tab-badge.visible { display: inline-block; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .collections { padding: 12px 16px; border-bottom: 1px solid #e5e5e5; max-height: 260px; overflow-y: auto; }
     .collection-row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; cursor: pointer; border-radius: 4px; }
     .collection-row:last-child { border-bottom: none; }
     .collection-row:hover { background: #fafafa; }
@@ -82,12 +94,22 @@ const html = `<!DOCTYPE html>
     .collection-count { font-size: 10px; color: #bbb; background: #f5f5f5; padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
     .select-all-row { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-bottom: 1px solid #e5e5e5; background: #fafafa; }
     .select-all-row label { font-size: 11px; color: #555; cursor: pointer; }
-    .actions { padding: 12px 16px; }
+    .styles-section { padding: 12px 16px; border-bottom: 1px solid #e5e5e5; }
+    .styles-section h2 { font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .style-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .style-row:last-child { border-bottom: none; }
+    .style-info .style-name { font-size: 12px; font-weight: 500; color: #111; }
+    .style-info .style-desc { font-size: 10px; color: #aaa; margin-top: 2px; }
+    .style-count { font-size: 10px; color: #bbb; background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+    .actions { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
     button { width: 100%; padding: 9px 16px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; }
     .btn-primary { background: #2563EB; color: #fff; }
     .btn-primary:hover { background: #1d4ed8; }
     .btn-primary:disabled { background: #bfdbfe; cursor: not-allowed; }
-    .log { padding: 10px 16px; font-size: 10px; font-family: monospace; color: #555; background: #f9f9f9; min-height: 60px; max-height: 100px; overflow-y: auto; border-top: 1px solid #e5e5e5; }
+    .btn-secondary { background: #f5f5f5; color: #333; }
+    .btn-secondary:hover { background: #e5e5e5; }
+    .btn-secondary:disabled { background: #f5f5f5; color: #bbb; cursor: not-allowed; }
+    .log { padding: 10px 16px; font-size: 10px; font-family: monospace; color: #555; background: #f9f9f9; min-height: 60px; max-height: 90px; overflow-y: auto; border-top: 1px solid #e5e5e5; }
     .log .success { color: #16a34a; }
     .log .error { color: #dc2626; }
     .log .info { color: #2563EB; }
@@ -96,22 +118,87 @@ const html = `<!DOCTYPE html>
   </style>
 </head>
 <body>
+
 <div class="header">
   <h1>Tao Token Pusher</h1>
-  <p>Select token collections to push to Figma variables</p>
+  <p>Push tokens and styles to Figma</p>
 </div>
-<div class="select-all-row">
-  <input type="checkbox" id="selectAll" onchange="toggleAll(this.checked)" />
-  <label for="selectAll">Select all</label>
-  <span id="selectedCount" style="margin-left:auto;font-size:10px;color:#aaa;">0 selected</span>
+
+<div class="tabs">
+  <div class="tab active" id="tab-variables" onclick="switchTab('variables', this)">
+    Variables
+    <span class="tab-badge" id="badge-variables"></span>
+  </div>
+  <div class="tab" id="tab-styles" onclick="switchTab('styles', this)">
+    Styles
+    <span class="tab-badge" id="badge-styles"></span>
+  </div>
 </div>
-<div class="collections" id="collections"></div>
-<div class="progress" id="progress"><div class="progress-bar" id="progressBar"></div></div>
-<div class="actions">
-  <button class="btn-primary" id="pushBtn" onclick="pushSelected()" disabled>Push selected to Figma</button>
+
+<div class="panel active" id="panel-variables">
+  <div class="select-all-row">
+    <input type="checkbox" id="selectAll" onchange="toggleAll(this.checked)" />
+    <label for="selectAll">Select all</label>
+    <span id="selectedCount" style="margin-left:auto;font-size:10px;color:#aaa;">0 selected</span>
+  </div>
+  <div class="collections" id="collections"></div>
+  <div class="progress" id="progress-variables"><div class="progress-bar" id="progressBar-variables"></div></div>
+  <div class="actions">
+    <button class="btn-primary" id="pushBtn" onclick="pushSelected()" disabled>Push selected to Figma</button>
+  </div>
 </div>
-<div class="log" id="log">Ready — select collections to push.</div>
+
+<div class="panel" id="panel-styles">
+  <div class="styles-section">
+    <h2>Text Styles</h2>
+    <div class="style-row">
+      <div class="style-info">
+        <div class="style-name">Typography scale</div>
+        <div class="style-desc">Display, Title 1–4, Body, Body SM, Label, Label SM × 3 weights</div>
+      </div>
+      <span class="style-count">27</span>
+    </div>
+  </div>
+  <div class="styles-section">
+    <h2>Effect Styles</h2>
+    <div class="style-row">
+      <div class="style-info">
+        <div class="style-name">Shadow presets</div>
+        <div class="style-desc">Surface, Non-modal, Sticky, Non-modal-sticky, Modal</div>
+      </div>
+      <span class="style-count">5</span>
+    </div>
+  </div>
+  <div class="progress" id="progress-styles"><div class="progress-bar" id="progressBar-styles"></div></div>
+  <div class="actions">
+    <button class="btn-primary" id="pushTextBtn" onclick="pushTextStyles()">Push Text Styles</button>
+    <button class="btn-secondary" id="pushShadowBtn" onclick="pushShadows()">Push Shadow Styles</button>
+    <button class="btn-primary" id="pushAllStylesBtn" onclick="pushAllStyles()">Push All Styles</button>
+  </div>
+</div>
+
+<div class="log" id="log">Checking Figma…</div>
+
 <script>
+  function switchTab(name, el) {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  function setBadge(id, count) {
+    var el = document.getElementById('badge-' + id);
+    if (!el) return;
+    if (count > 0) {
+      el.textContent = count;
+      el.classList.add('visible');
+    } else {
+      el.textContent = '';
+      el.classList.remove('visible');
+    }
+  }
+
   var checkboxes = [];
 
   function countTokens(tokens) {
@@ -129,6 +216,29 @@ const html = `<!DOCTYPE html>
     }
     walk(tokens);
     return count;
+  }
+
+  function log(msg, type) {
+    var el = document.getElementById('log');
+    el.innerHTML += '<div class="' + (type || '') + '">' + msg + '</div>';
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function setProgress(id, pct) {
+    var wrap = document.getElementById('progress-' + id);
+    var bar  = document.getElementById('progressBar-' + id);
+    if (!wrap || !bar) return;
+    wrap.style.display = 'block';
+    bar.style.width = pct + '%';
+    if (pct >= 100) {
+      setTimeout(function() { wrap.style.display = 'none'; }, 800);
+    }
+  }
+
+  function setStyleBtnsDisabled(disabled) {
+    document.getElementById('pushTextBtn').disabled = disabled;
+    document.getElementById('pushShadowBtn').disabled = disabled;
+    document.getElementById('pushAllStylesBtn').disabled = disabled;
   }
 
   function renderCollections() {
@@ -177,20 +287,6 @@ const html = `<!DOCTYPE html>
     updateCount();
   }
 
-  function log(msg, type) {
-    var el = document.getElementById('log');
-    el.innerHTML += '<div class="' + (type || '') + '">' + msg + '</div>';
-    el.scrollTop = el.scrollHeight;
-  }
-
-  function setProgress(pct) {
-    document.getElementById('progress').style.display = 'block';
-    document.getElementById('progressBar').style.width = pct + '%';
-    if (pct >= 100) {
-      setTimeout(function() { document.getElementById('progress').style.display = 'none'; }, 800);
-    }
-  }
-
   function pushSelected() {
     var selected = [];
     for (var i = 0; i < checkboxes.length; i++) {
@@ -200,25 +296,87 @@ const html = `<!DOCTYPE html>
     document.getElementById('pushBtn').disabled = true;
     document.getElementById('log').innerHTML = '';
     log('Pushing ' + selected.length + ' collection(s)...', 'info');
-    setProgress(5);
+    setProgress('variables', 5);
     parent.postMessage({ pluginMessage: { type: 'push-all', collections: selected } }, '*');
+  }
+
+  function pushTextStyles() {
+    document.getElementById('log').innerHTML = '';
+    setStyleBtnsDisabled(true);
+    setProgress('styles', 5);
+    log('Pushing Text Styles...', 'info');
+    parent.postMessage({ pluginMessage: { type: 'push-text-styles', tokens: TYPOGRAPHY_BUNDLE } }, '*');
+  }
+
+  function pushShadows() {
+    document.getElementById('log').innerHTML = '';
+    setStyleBtnsDisabled(true);
+    setProgress('styles', 5);
+    log('Pushing Shadow Styles...', 'info');
+    parent.postMessage({ pluginMessage: { type: 'push-shadows' } }, '*');
+  }
+
+  function pushAllStyles() {
+    document.getElementById('log').innerHTML = '';
+    setStyleBtnsDisabled(true);
+    setProgress('styles', 5);
+    log('Pushing all Styles...', 'info');
+    window._pendingAllStyles = true;
+    parent.postMessage({ pluginMessage: { type: 'push-text-styles', tokens: TYPOGRAPHY_BUNDLE } }, '*');
   }
 
   window.onmessage = function(event) {
     var msg = event.data.pluginMessage;
     if (!msg) return;
+
     if (msg.type === 'log') log(msg.message, msg.level);
-    if (msg.type === 'progress') setProgress(msg.pct);
+
+    if (msg.type === 'diff') {
+      document.getElementById('log').innerHTML = '';
+      setBadge('variables', msg.variables);
+      setBadge('styles', msg.styles);
+      if (msg.variables === 0 && msg.styles === 0) {
+        log('Figma is up to date.', 'success');
+      } else {
+        if (msg.variables > 0) log(msg.variables + ' variable(s) missing — push Variables to sync.', 'info');
+        if (msg.styles > 0)    log(msg.styles + ' style(s) missing — push Styles to sync.', 'info');
+      }
+    }
+
+    if (msg.type === 'progress') {
+      setProgress('variables', msg.pct);
+      setProgress('styles', msg.pct);
+    }
+
     if (msg.type === 'done') {
-      document.getElementById('pushBtn').disabled = false;
-      setProgress(100);
+      if (window._pendingAllStyles) {
+        window._pendingAllStyles = false;
+        setProgress('styles', 50);
+        log('Pushing Shadow Styles...', 'info');
+        parent.postMessage({ pluginMessage: { type: 'push-shadows' } }, '*');
+        return;
+      }
+      document.getElementById('pushBtn').disabled = (checkboxes.filter(function(id) {
+        return document.getElementById(id).checked;
+      }).length === 0);
+      setStyleBtnsDisabled(false);
+      setProgress('variables', 100);
+      setProgress('styles', 100);
+      // Re-run diff after push to clear badges if everything is in sync
+      parent.postMessage({ pluginMessage: { type: 'ready', collections: TOKEN_BUNDLE, typographyTokens: TYPOGRAPHY_BUNDLE } }, '*');
     }
   };
 </script>
+
 <script>
   var TOKEN_BUNDLE = ${JSON.stringify(bundle)};
+  var TYPOGRAPHY_BUNDLE = ${JSON.stringify(typographyTokens)};
+  var SHADOW_BUNDLE = ${JSON.stringify(shadowTokens)};
   renderCollections();
+  // Fire diff check on open
+  parent.postMessage({ pluginMessage: { type: 'ready', collections: TOKEN_BUNDLE, typographyTokens: TYPOGRAPHY_BUNDLE } }, '*');
 </script>
+
 </body>
 </html>`;
 

@@ -397,11 +397,64 @@ async function pushEffectStyles() {
   figma.ui.postMessage({ type: 'done' });
 }
 
+// ─── Diff check ──────────────────────────────────────────────────────────────
+
+async function checkDiff(collections, typographyTokens) {
+  var variablesMissing = 0;
+
+  // Check variables: count tokens missing from Figma
+  var existingVars = await figma.variables.getLocalVariablesAsync();
+  var existingVarNames = {};
+  for (var i = 0; i < existingVars.length; i++) {
+    existingVarNames[existingVars[i].name] = true;
+  }
+
+  for (var c = 0; c < collections.length; c++) {
+    var flat = flattenTokens(collections[c].tokens, '');
+    for (var i = 0; i < flat.length; i++) {
+      if (!existingVarNames[flat[i].name]) variablesMissing++;
+    }
+  }
+
+  // Check text styles: count tokens missing from Figma
+  var existingTextStyles = await figma.getLocalTextStylesAsync();
+  var existingTextNames = {};
+  for (var i = 0; i < existingTextStyles.length; i++) {
+    existingTextNames[existingTextStyles[i].name] = true;
+  }
+
+  var flatTypo = flattenTypographyTokens(typographyTokens, '');
+  var textMissing = 0;
+  for (var i = 0; i < flatTypo.length; i++) {
+    if (!existingTextNames[flatTypo[i].name]) textMissing++;
+  }
+
+  // Check effect styles: count shadow presets missing from Figma
+  var existingEffectStyles = await figma.getLocalEffectStylesAsync();
+  var existingEffectNames = {};
+  for (var i = 0; i < existingEffectStyles.length; i++) {
+    existingEffectNames[existingEffectStyles[i].name] = true;
+  }
+
+  var shadowMissing = 0;
+  var shadowLevels = Object.keys(SHADOW_NAMES);
+  for (var i = 0; i < shadowLevels.length; i++) {
+    if (!existingEffectNames[SHADOW_NAMES[shadowLevels[i]]]) shadowMissing++;
+  }
+
+  figma.ui.postMessage({
+    type: 'diff',
+    variables: variablesMissing,
+    styles: textMissing + shadowMissing
+  });
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 figma.showUI(__html__, { width: 400, height: 560 });
 
 figma.ui.onmessage = async function(msg) {
+  if (msg.type === 'ready')            await checkDiff(msg.collections, msg.typographyTokens);
   if (msg.type === 'push-all')         await pushAll(msg.collections);
   if (msg.type === 'push-text-styles') await pushTextStyles(msg.tokens);
   if (msg.type === 'push-shadows')     await pushEffectStyles();

@@ -21,6 +21,37 @@ function resolveSize(ref) {
   return SIZE_MAP[match[1]] ?? ref;
 }
 
+function Callout({ children }) {
+  return (
+    <div style={{
+      background: theme.bg.surface,
+      border: `1px solid ${theme.border.subtle}`,
+      borderLeft: `3px solid ${theme.border.focus}`,
+      borderRadius: 6,
+      padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
+      marginBottom: theme.spacing.xl,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: theme.spacing.xxs,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function CalloutRow({ label, value, muted }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: theme.spacing.xs }}>
+      <span style={{ fontFamily: theme.font, fontSize: 10, fontWeight: 600, color: theme.text.subtlest, textTransform: 'uppercase', letterSpacing: '0.08em', minWidth: 110 }}>
+        {label}
+      </span>
+      <span style={{ fontFamily: theme.font, fontSize: 11, color: muted ? theme.text.subtlest : theme.text.default }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
 function StyleRow({ styleName }) {
   const [copied, setCopied] = useState(null);
 
@@ -89,7 +120,7 @@ export function TypeStyles() {
     <div style={{ background: theme.bg.page, minHeight: '100vh', padding: `${theme.spacing.xxl}px ${theme.spacing.xxl}px`, fontFamily: theme.font }}>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" />
 
-      <div style={{ marginBottom: theme.spacing.xxl }}>
+      <div style={{ marginBottom: theme.spacing.xl }}>
         <h1 style={{ fontFamily: theme.font, fontSize: 26, fontWeight: 300, color: theme.text.default, letterSpacing: '-0.02em', marginBottom: theme.spacing.xxs }}>
           Type Styles
         </h1>
@@ -97,6 +128,26 @@ export function TypeStyles() {
           9 styles · 3 weights each · click row to copy token name
         </p>
       </div>
+
+      <Callout>
+        <CalloutRow
+          label="Source of truth"
+          value="tokens/semantic/typography.json — composed styles with fontSize, fontWeight, lineHeight"
+        />
+        <CalloutRow
+          label="In Figma"
+          value="Text Styles — static definitions with resolved values, not linked to variables"
+        />
+        <CalloutRow
+          label="Why not variables?"
+          value="Figma has no variable type for typography composites. Font size, weight, and line height cannot be bound to a variable inside a Text Style."
+        />
+        <CalloutRow
+          label="Implication"
+          value="If the type scale changes, re-run the Tao plugin → Styles → Push All Styles to resync."
+          muted
+        />
+      </Callout>
 
       <div style={{
         display: 'grid',
