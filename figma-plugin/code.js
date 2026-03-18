@@ -89,7 +89,6 @@ function inferFigmaType(type, value) {
   if (type === 'color') return 'COLOR';
   if (type === 'spacing' || type === 'dimension' || type === 'borderRadius' || type === 'borderWidth' || type === 'number') return 'FLOAT';
   if (type === 'boolean') return 'BOOLEAN';
-  // Auto-detect color from value
   if (typeof value === 'string' && (value.indexOf('#') === 0 || value.indexOf('oklch') === 0)) return 'COLOR';
   return 'STRING';
 }
@@ -139,7 +138,6 @@ async function pushCollection(item) {
         updated++;
       }
 
-      // Set description if present
       if (token.description) {
         variable.description = token.description;
       }
@@ -157,7 +155,6 @@ async function pushCollection(item) {
 
       variable.setValueForMode(modeId, value);
 
-      // Set CSS code syntax for Dev Mode
       var cssVarName = 'var(--tao-' + token.name.replace(/\//g, '-') + ')';
       variable.setVariableCodeSyntax('WEB', cssVarName);
 
@@ -170,7 +167,7 @@ async function pushCollection(item) {
   log('  ✓ ' + item.collection + ' — ' + created + ' created, ' + updated + ' updated, ' + errors + ' errors', 'success');
 }
 
-// ─── Push all selected ────────────────────────────────────────────────────────
+// ─── Push all variable collections ───────────────────────────────────────────
 
 async function pushAll(collections) {
   log('Pushing ' + collections.length + ' collection(s)...', 'info');
@@ -184,10 +181,228 @@ async function pushAll(collections) {
   figma.ui.postMessage({ type: 'done' });
 }
 
+// ─── Typography ───────────────────────────────────────────────────────────────
+
+// Resolved from tokens/base/typography.json — update here if sizes change
+var TYPOGRAPHY_SIZES = {
+  'xs':   11,
+  'sm':   13,
+  'md':   16,
+  'lg':   19,
+  'xl':   23,
+  'xxl':  28,
+  'xxxl': 33
+};
+
+// ⚠️  Update to match the typeface used in your Figma file
+var FONT_FAMILY = 'Inter';
+
+var FONT_WEIGHT_MAP = {
+  '300': 'Light',
+  '400': 'Regular',
+  '700': 'Bold'
+};
+
+function resolveTypographyRef(ref) {
+  // Handles "{typography.size.xl}" → 23
+  if (typeof ref === 'string') {
+    var match = ref.match(/\{typography\.size\.(\w+)\}/);
+    if (match) return TYPOGRAPHY_SIZES[match[1]] || 16;
+    return parseFloat(ref) || 16;
+  }
+  return typeof ref === 'number' ? ref : 16;
+}
+
+function flattenTypographyTokens(obj, prefix) {
+  var result = [];
+  var keys = Object.keys(obj);
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var val = obj[key];
+    var fullKey = prefix ? prefix + '/' + key : key;
+    if (val && typeof val === 'object' && ('$value' in val || 'value' in val)) {
+      var rawVal = val['$value'] !== undefined ? val['$value'] : val['value'];
+      // Only process composite typography tokens (objects with fontSize)
+      if (rawVal && typeof rawVal === 'object' && rawVal.fontSize) {
+        result.push({
+          name: fullKey,
+          value: rawVal,
+          description: val['$description'] || val['comment'] || ''
+        });
+      }
+    } else if (val && typeof val === 'object') {
+      var nested = flattenTypographyTokens(val, fullKey);
+      for (var j = 0; j < nested.length; j++) result.push(nested[j]);
+    }
+  }
+  return result;
+}
+
+async function pushTextStyles(tokens) {
+  log('Creating Text Styles...', 'info');
+
+  var flat = flattenTypographyTokens(tokens, '');
+  log('  → ' + flat.length + ' typography tokens found', 'info');
+
+  var existingStyles = await figma.getLocalTextStylesAsync();
+  var styleMap = {};
+  for (var i = 0; i < existingStyles.length; i++) {
+    styleMap[existingStyles[i].name] = existingStyles[i];
+  }
+
+  var created = 0, updated = 0, errors = 0;
+
+  for (var i = 0; i < flat.length; i++) {
+    var token = flat[i];
+    try {
+      var fontWeight = String(token.value.fontWeight || '400');
+      var fontStyle  = FONT_WEIGHT_MAP[fontWeight] || 'Regular';
+      var fontSize   = resolveTypographyRef(token.value.fontSize);
+      var lineHeight = parseFloat(token.value.lineHeight) || 1.5;
+
+      // Load font before creating/editing the style
+      await figma.loadFontAsync({ family: FONT_FAMILY, style: fontStyle });
+
+      var style = styleMap[token.name];
+      if (!style) {
+        style = figma.createTextStyle();
+        style.name = token.name;
+        created++;
+      } else {
+        updated++;
+      }
+
+      style.fontName   = { family: FONT_FAMILY, style: fontStyle };
+      style.fontSize   = fontSize;
+      style.lineHeight = { unit: 'PERCENT', value: lineHeight * 100 };
+
+      if (token.description) style.description = token.description;
+
+    } catch (e) {
+      log('  Error on ' + token.name + ': ' + e.message, 'error');
+      errors++;
+    }
+  }
+
+  log('✓ Text Styles — ' + created + ' created, ' + updated + ' updated, ' + errors + ' errors', 'success');
+  figma.ui.postMessage({ type: 'done' });
+}
+
+// ─── Shadows / Effect Styles ──────────────────────────────────────────────────
+
+// Resolved from tokens/base/shadows.json globals
+var SHADOW_OPACITY = 0.08;
+var SHADOW_RGB     = { r: 0, g: 0, b: 0 };
+
+// key + ambient shadow values per elevation level
+// Resolved from tokens/base/shadows.json key/ambient arrays
+var SHADOW_LAYERS = {
+  'xs': {
+    key:     { x: 0, y: 1, blur: 4,  spread: 0 },
+    ambient: { x: 0, y: 2, blur: 8,  spread: 0 }
+  },
+  'sm': {
+    key:     { x: 0, y: 2, blur: 8,  spread: 0 },
+    ambient: { x: 0, y: 3, blur: 12, spread: 0 }
+  },
+  'md': {
+    key:     { x: 0, y: 3, blur: 12, spread: 0 },
+    ambient: { x: 0, y: 4, blur: 16, spread: 0 }
+  },
+  'lg': {
+    key:     { x: 0, y: 4, blur: 16, spread: 0 },
+    ambient: { x: 0, y: 5, blur: 20, spread: 0 }
+  },
+  'xl': {
+    key:     { x: 0, y: 2, blur: 8,  spread: 0 },
+    ambient: { x: 0, y: 6, blur: 24, spread: 0 }
+  }
+};
+
+// Semantic names from tokens/base/shadows.json preset
+var SHADOW_NAMES = {
+  'xs': 'shadow/surface',
+  'sm': 'shadow/non-modal',
+  'md': 'shadow/sticky',
+  'lg': 'shadow/non-modal-sticky',
+  'xl': 'shadow/modal'
+};
+
+// Descriptions from tokens/base/shadows.json preset.$description
+var SHADOW_DESCRIPTIONS = {
+  'xs': 'Cards, panels — surface level elements',
+  'sm': 'Non-modal elements',
+  'md': 'Sticky elements',
+  'lg': 'Non-modal elements on sticky surfaces',
+  'xl': 'Modal elements'
+};
+
+async function pushEffectStyles() {
+  log('Creating Effect Styles...', 'info');
+
+  var existingStyles = await figma.getLocalEffectStylesAsync();
+  var styleMap = {};
+  for (var i = 0; i < existingStyles.length; i++) {
+    styleMap[existingStyles[i].name] = existingStyles[i];
+  }
+
+  var created = 0, updated = 0, errors = 0;
+  var levels = Object.keys(SHADOW_LAYERS);
+
+  for (var i = 0; i < levels.length; i++) {
+    var level     = levels[i];
+    var layers    = SHADOW_LAYERS[level];
+    var styleName = SHADOW_NAMES[level];
+
+    try {
+      var style = styleMap[styleName];
+      if (!style) {
+        style = figma.createEffectStyle();
+        style.name = styleName;
+        style.description = SHADOW_DESCRIPTIONS[level] || '';
+        created++;
+      } else {
+        style.description = SHADOW_DESCRIPTIONS[level] || '';
+        updated++;
+      }
+
+      style.effects = [
+        {
+          type:      'DROP_SHADOW',
+          color:     { r: SHADOW_RGB.r, g: SHADOW_RGB.g, b: SHADOW_RGB.b, a: SHADOW_OPACITY },
+          offset:    { x: layers.key.x, y: layers.key.y },
+          radius:    layers.key.blur,
+          spread:    layers.key.spread,
+          visible:   true,
+          blendMode: 'NORMAL'
+        },
+        {
+          type:      'DROP_SHADOW',
+          color:     { r: SHADOW_RGB.r, g: SHADOW_RGB.g, b: SHADOW_RGB.b, a: SHADOW_OPACITY },
+          offset:    { x: layers.ambient.x, y: layers.ambient.y },
+          radius:    layers.ambient.blur,
+          spread:    layers.ambient.spread,
+          visible:   true,
+          blendMode: 'NORMAL'
+        }
+      ];
+
+    } catch (e) {
+      log('  Error on ' + styleName + ': ' + e.message, 'error');
+      errors++;
+    }
+  }
+
+  log('✓ Effect Styles — ' + created + ' created, ' + updated + ' updated, ' + errors + ' errors', 'success');
+  figma.ui.postMessage({ type: 'done' });
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 figma.showUI(__html__, { width: 400, height: 560 });
 
 figma.ui.onmessage = async function(msg) {
-  if (msg.type === 'push-all') await pushAll(msg.collections);
+  if (msg.type === 'push-all')         await pushAll(msg.collections);
+  if (msg.type === 'push-text-styles') await pushTextStyles(msg.tokens);
+  if (msg.type === 'push-shadows')     await pushEffectStyles();
 };
