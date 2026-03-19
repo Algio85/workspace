@@ -18,6 +18,7 @@ const TOKEN_FILES = [
   { file: 'tokens/semantic/borders.json',     collection: 'Semantic/Borders',  description: 'Border color tokens' },
   { file: 'tokens/semantic/states.json',      collection: 'Semantic/States',   description: 'Interactive state tokens' },
   { file: 'tokens/components/button.json',    collection: 'Components/Button', description: 'Button component tokens' },
+  { file: 'tokens/semantic/icons.json',       collection: 'Semantic/Icons',    description: 'Icon color tokens' },
 ];
 
 const shades = JSON.parse(fs.readFileSync(path.join(root, 'tokens/base/shades.json'), 'utf8'));
@@ -84,7 +85,7 @@ function resolveTokens(obj, primitives) {
 const bundle = TOKEN_FILES.map(({ file, collection, description }) => {
   let tokens = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
   // Component tokens need the full primitive set to resolve semantic refs
-  const primitives = collection.startsWith('Components/') ? allPrimitives : shades;
+  const primitives = (collection.startsWith('Components/') || collection.startsWith('Semantic/')) ? allPrimitives : shades;
   tokens = resolveTokens(tokens, primitives);
   return { file, collection, description, tokens };
 });
