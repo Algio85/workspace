@@ -19,7 +19,7 @@ const meta = {
         component: `
 Semantic icon color tokens for the Tao design system.
 
-Icons use the same semantic color tokens as text — \`text.*\` tokens apply directly to icon fills via \`color\` prop or CSS \`currentColor\`.
+Icons have their own dedicated token layer — \`icon.*\` — which aliases the \`text.*\` tokens. This keeps icon and text colors in sync by default while allowing them to be overridden independently in the future.
 
 ---
 
@@ -28,34 +28,34 @@ Icons use the same semantic color tokens as text — \`text.*\` tokens apply dir
 \`\`\`jsx
 import { WarningIcon } from '@phosphor-icons/react';
 
-// Using a semantic token via CSS currentColor
-<span style={{ color: 'var(--tao-text-danger)' }}>
+// Via CSS custom property
+<WarningIcon size={20} weight="fill" color="var(--tao-icon-danger)" />
+
+// Via currentColor
+<span style={{ color: 'var(--tao-icon-danger)' }}>
   <WarningIcon size={20} weight="fill" color="currentColor" />
 </span>
-
-// Or passing the token value directly
-<WarningIcon size={20} weight="fill" color="var(--tao-text-danger)" />
 \`\`\`
 
 ### Token reference
 
-| Token | Use case |
-|---|---|
-| \`text.default\` | Primary icons, default state |
-| \`text.subtle\` | Secondary icons, supporting UI |
-| \`text.subtlest\` | Placeholder, disabled icons |
-| \`text.inverse\` | Icons on dark backgrounds |
-| \`text.brand-1\` | Brand 1 colored icons |
-| \`text.brand-2\` | Brand 2 colored icons |
-| \`text.brand-3\` | Brand 3 colored icons |
-| \`text.success\` | Success state icons |
-| \`text.danger\` | Error / destructive icons |
-| \`text.alert\` | Warning icons |
-| \`text.info\` | Info icons |
-| \`text.news\` | News icons |
-| \`text.ai\` | AI-generated content icons |
+| Token | Aliases | Use case |
+|---|---|---|
+| \`icon.default\` | \`text.default\` | Primary icons, default state |
+| \`icon.subtle\` | \`text.subtle\` | Secondary icons, supporting UI |
+| \`icon.subtlest\` | \`text.subtlest\` | Placeholder, disabled icons |
+| \`icon.inverse\` | \`text.inverse\` | Icons on dark backgrounds |
+| \`icon.brand-1\` | \`text.brand-1\` | Brand 1 colored icons |
+| \`icon.brand-2\` | \`text.brand-2\` | Brand 2 colored icons |
+| \`icon.brand-3\` | \`text.brand-3\` | Brand 3 colored icons |
+| \`icon.success\` | \`text.success\` | Success state icons |
+| \`icon.danger\` | \`text.danger\` | Error / destructive icons |
+| \`icon.alert\` | \`text.alert\` | Warning icons |
+| \`icon.info\` | \`text.info\` | Info icons |
+| \`icon.news\` | \`text.news\` | News icons |
+| \`icon.ai\` | \`text.ai\` | AI content icons |
 
-Toggle weight per row to preview how thin, regular, bold, and fill weights look across each color.
+Toggle weight per row to preview how regular, bold, and fill weights read across each color.
 
 Click any token name to copy it to clipboard.
         `.trim(),

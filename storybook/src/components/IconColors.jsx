@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { theme } from '../tokens/theme.js';
 import { resolveTokens } from '../tokens/resolve.js';
-import textTokens from '../tokens/semantic/text.json';
+import iconTokens from '../tokens/semantic/icons.json';
 import shades from '../tokens/shades.json';
 import {
   ArrowRightIcon,
@@ -14,18 +14,17 @@ import {
   MagnifyingGlassIcon,
 } from '@phosphor-icons/react';
 
-const resolved = resolveTokens(textTokens, '', shades);
+const resolved = resolveTokens(iconTokens, '', shades);
 
-// Representative icons — one per semantic category feel
 const ICONS = [
-  { Icon: ArrowRightIcon,       label: 'ArrowRight' },
-  { Icon: WarningIcon,          label: 'Warning' },
-  { Icon: CheckCircleIcon,      label: 'CheckCircle' },
-  { Icon: InfoIcon,             label: 'Info' },
-  { Icon: StarIcon,             label: 'Star' },
-  { Icon: HeartIcon,            label: 'Heart' },
-  { Icon: BellIcon,             label: 'Bell' },
-  { Icon: MagnifyingGlassIcon,  label: 'MagnifyingGlass' },
+  { Icon: ArrowRightIcon,      label: 'ArrowRight' },
+  { Icon: WarningIcon,         label: 'Warning' },
+  { Icon: CheckCircleIcon,     label: 'CheckCircle' },
+  { Icon: InfoIcon,            label: 'Info' },
+  { Icon: StarIcon,            label: 'Star' },
+  { Icon: HeartIcon,           label: 'Heart' },
+  { Icon: BellIcon,            label: 'Bell' },
+  { Icon: MagnifyingGlassIcon, label: 'MagnifyingGlass' },
 ];
 
 const TOKENS = [
@@ -49,7 +48,7 @@ const WEIGHTS = ['regular', 'bold', 'fill'];
 function IconRow({ name }) {
   const [copied, setCopied] = useState(false);
   const [weight, setWeight] = useState('regular');
-  const tokenName = `text.${name}`;
+  const tokenName = `icon.${name}`;
   const value = resolved[tokenName];
   const isInverse = name === 'inverse';
 
@@ -62,7 +61,6 @@ function IconRow({ name }) {
 
   return (
     <div
-      title={`Copy: ${tokenName}`}
       style={{
         display: 'grid',
         gridTemplateColumns: '160px 140px 1fr',
@@ -75,15 +73,14 @@ function IconRow({ name }) {
         borderBottom: `1px solid ${theme.border.subtle}`,
       }}
     >
-      {/* Token name — click to copy */}
       <span
         onClick={handleCopy}
+        title={`Copy: ${tokenName}`}
         style={{ fontFamily: theme.font, fontSize: 11, color: copied ? '#16a34a' : theme.text.subtle, transition: 'color 0.2s', cursor: 'pointer' }}
       >
         {copied ? '✓ copied' : tokenName}
       </span>
 
-      {/* Color swatch + hex */}
       <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.xs }}>
         <div style={{
           width: 24, height: 24, borderRadius: theme.spacing.xs,
@@ -94,7 +91,6 @@ function IconRow({ name }) {
         <span style={{ fontFamily: theme.font, fontSize: 10, color: theme.text.subtlest }}>{value}</span>
       </div>
 
-      {/* Icon preview */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -104,7 +100,6 @@ function IconRow({ name }) {
         background: isInverse ? theme.text.default : theme.bg.raised,
         border: `1px solid ${theme.border.subtle}`,
       }}>
-        {/* Weight selector */}
         <div style={{ display: 'flex', gap: 4, marginRight: theme.spacing.xs }}>
           {WEIGHTS.map(w => (
             <button
@@ -131,14 +126,8 @@ function IconRow({ name }) {
           ))}
         </div>
 
-        {/* Icons */}
         {ICONS.map(({ Icon, label }) => (
-          <Icon
-            key={label}
-            size={20}
-            weight={weight}
-            color={value}
-          />
+          <Icon key={label} size={20} weight={weight} color={value} />
         ))}
       </div>
     </div>
