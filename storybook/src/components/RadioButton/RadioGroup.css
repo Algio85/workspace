@@ -1,0 +1,60 @@
+/* ─── Radio Group ─────────────────────────────────────────────────────────── */
+
+.radio-group {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--tao-spacing-sm);
+  align-items:    flex-start;
+  font-family:    'DM Sans', sans-serif;
+}
+
+/* ─── Header ──────────────────────────────────────────────────────────────── */
+
+.radio-group__header {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--tao-spacing-xxs);
+  align-items:    flex-start;
+}
+
+.radio-group__label-row {
+  display:     flex;
+  align-items: center;
+  gap:         var(--tao-spacing-xxs);
+}
+
+.radio-group__label {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color:       var(--tao-text-default);
+  white-space: nowrap;
+}
+
+.radio-group__required {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   11px;
+  font-weight: 400;
+  line-height: normal;
+  color:       var(--tao-text-subtle);
+  white-space: nowrap;
+}
+
+.radio-group__hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   11px;
+  font-weight: 400;
+  line-height: 1.4;
+  color:       var(--tao-text-subtlest);
+  white-space: nowrap;
+}
+
+/* ─── Options ─────────────────────────────────────────────────────────────── */
+
+.radio-group__options {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--tao-spacing-xs);
+  align-items:    flex-start;
+}

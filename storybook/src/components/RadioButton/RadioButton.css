@@ -1,0 +1,111 @@
+/* ─── Radio Button ────────────────────────────────────────────────────────── */
+
+.radio-button {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--tao-spacing-xs);
+  cursor:      pointer;
+  font-family: 'DM Sans', sans-serif;
+  position:    relative;
+  user-select: none;
+}
+
+.radio-button--disabled {
+  opacity:        0.5;
+  cursor:         not-allowed;
+  pointer-events: none;
+}
+
+/* ─── Hide native input ───────────────────────────────────────────────────── */
+
+.radio-button__input {
+  position:    absolute;
+  width:        1px;
+  height:       1px;
+  opacity:      0;
+  margin:       0;
+  padding:      0;
+  border:       0;
+  overflow:     hidden;
+  clip:         rect(0 0 0 0);
+  white-space:  nowrap;
+  appearance:          none;
+  -webkit-appearance:  none;
+}
+
+/* ─── Focus visible — keyboard navigation ─────────────────────────────────── */
+
+.radio-button__input:focus-visible ~ .radio-button__radio {
+  box-shadow:    0 0 0 2px var(--tao-border-focus);
+  border-radius: 50%;
+  outline:       none;
+}
+
+/* ─── Custom radio circle ─────────────────────────────────────────────────── */
+
+.radio-button__radio {
+  flex-shrink: 0;
+  width:       16px;
+  height:      16px;
+  position:    relative;
+  display:     inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Image assets ────────────────────────────────────────────────────────── */
+
+.radio-button__img {
+  position:   absolute;
+  display:    block;
+  width:      100%;
+  height:     100%;
+  max-width:  none;
+  top:        0;
+  left:       0;
+  transition: opacity var(--tao-duration-fast) var(--tao-easing-ease-out);
+}
+
+/* Hover/press — image bleeds by 12.5% to show focus ring */
+.radio-button__img-bleed {
+  position: absolute;
+  inset:    -12.5%;
+  display:  block;
+}
+
+.radio-button__img-bleed .radio-button__img {
+  position: static;
+  width:    100%;
+  height:   100%;
+}
+
+/* ─── Label group ─────────────────────────────────────────────────────────── */
+
+.radio-button__label-group {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--tao-spacing-xxs);
+  overflow:    hidden;
+  white-space: nowrap;
+}
+
+.radio-button__label {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color:       var(--tao-text-default);
+  transition:  color var(--tao-duration-fast) var(--tao-easing-ease-out);
+}
+
+.radio-button__label--disabled {
+  color: var(--tao-state-disabled-text);
+}
+
+.radio-button__required {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   12px;
+  font-weight: 400;
+  line-height: normal;
+  color:       var(--tao-text-subtle);
+}
