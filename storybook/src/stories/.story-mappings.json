@@ -7,5 +7,14 @@
     "createdAt": "2026-03-25T12:45:05.895Z",
     "updatedAt": "2026-03-25T12:45:05.895Z",
     "prompt": "make a square with one of the surface tokens"
+  },
+  {
+    "title": "Page With A Form With A List Of Checkboxes And A Title",
+    "fileName": "page-with-a-form-with-a-list-of-checkboxes-and-a-title-9401b7a4.stories.tsx",
+    "storyId": "story-9401b7a4",
+    "hash": "9401b7a4",
+    "createdAt": "2026-03-27T08:01:34.103Z",
+    "updatedAt": "2026-03-27T08:01:34.103Z",
+    "prompt": "make a page with a form with a list of checkboxes and a title"
   }
 ]

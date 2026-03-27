@@ -1,5 +1,5 @@
 module.exports = {
-  "importPath": "./src/components",
+  "importPath": "../../components",
   "componentPrefix": "",
   "componentsPath": "/Users/algio85/Projects/tao/storybook/src/components",
   "layoutRules": {

@@ -1,0 +1,14 @@
+{
+  "storyId": "page-with-a-form-with-a-list-of-checkboxes-and-a-title",
+  "title": "Page With A Form With A List Of Checkboxes And A Title",
+  "versions": [
+    {
+      "id": "a0b0bf9cf3b9378a",
+      "timestamp": 1774598494103,
+      "prompt": "make a page with a form with a list of checkboxes and a title",
+      "code": "import React from 'react';\nimport type { Meta, StoryObj } from '@storybook/react';\nimport { Checkbox } from './src/components';\n\nconst meta: Meta = {\n  title: 'Generated/Page With A Form With A List Of Checkboxes And A Title',\n  id: 'page-with-a-form-with-a-list-of-checkboxes-and-a-title-9401b7a4',\n  parameters: { layout: 'padded' },\n  tags: ['autodocs'],\n};\n\nexport default meta;\ntype Story = StoryObj;\n\nexport const DefaultForm: Story = {\n  render: () => (\n    <div style={{ padding: '24px' }}>\n      <h2 style={{ marginTop: '32px', marginBottom: '16px' }}>\n        Configure Your Preferences\n      </h2>\n      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n        <Checkbox id=\"option1\" label=\"Receive product updates\" />\n        <Checkbox id=\"option2\" label=\"Subscribe to our weekly newsletter\" />\n        <Checkbox id=\"option3\" label=\"Enable push notifications\" />\n        <Checkbox id=\"option4\" label=\"Agree to terms of service\" defaultChecked />\n        <Checkbox id=\"option5\" label=\"Opt-in for beta features\" />\n      </div>\n    </div>\n  ),\n};\n\nexport const DisabledCheckboxes: Story = {\n  render: () => (\n    <div style={{ padding: '24px' }}>\n      <h2 style={{ marginTop: '32px', marginBottom: '16px' }}>\n        Disabled Options\n      </h2>\n      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n        <Checkbox id=\"disabled1\" label=\"Option A (disabled)\" disabled />\n        <Checkbox id=\"disabled2\" label=\"Option B (disabled and checked)\" disabled defaultChecked />\n      </div>\n    </div>\n  ),\n};",
+      "fileName": "page-with-a-form-with-a-list-of-checkboxes-and-a-title-9401b7a4.stories.tsx"
+    }
+  ],
+  "currentVersionId": "a0b0bf9cf3b9378a"
+}

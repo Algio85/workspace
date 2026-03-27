@@ -11,32 +11,18 @@ const imgCheckedDisabled = "https://www.figma.com/api/mcp/asset/d7ead72c-061c-48
 export function Checkbox({
   checked        = false,
   defaultChecked,
-  state: forcedState, // only used for Storybook docs / static snapshots
+  state,          // only for Storybook static snapshots
   label          = 'Label',
   required       = false,
   id,
   onChange,
   className,
 }) {
-  // Internal interaction state — driven by real mouse events
-  const [interactionState, setInteractionState] = useState('idle');
-  // Support both controlled and uncontrolled checked
   const [internalChecked, setInternalChecked] = useState(defaultChecked ?? checked);
-
-  // If forcedState is passed (Storybook), use it; otherwise use real interaction
-  const state      = forcedState || interactionState;
-  const isChecked  = forcedState ? checked : internalChecked;
+  const isChecked  = state ? checked : internalChecked;
   const isDisabled = state === 'disabled';
-  const isHover    = state === 'hover';
-  const isPress    = state === 'press';
-  const isIdle     = state === 'idle';
 
   const inputId = id || `checkbox-${label.toLowerCase().replace(/\s+/g, '-')}`;
-
-  const handleMouseEnter = () => { if (!isDisabled) setInteractionState('hover'); };
-  const handleMouseLeave = () => { if (!isDisabled) setInteractionState('idle'); };
-  const handleMouseDown  = () => { if (!isDisabled) setInteractionState('press'); };
-  const handleMouseUp    = () => { if (!isDisabled) setInteractionState('hover'); };
 
   const handleChange = (e) => {
     if (!isDisabled) {
@@ -45,31 +31,17 @@ export function Checkbox({
     }
   };
 
-  const boxClass = [
-    'checkbox__box',
-    isChecked
-      ? 'checkbox__box--checked'
-      : isDisabled
-        ? 'checkbox__box--disabled'
-        : isPress
-          ? 'checkbox__box--press'
-          : isHover
-            ? 'checkbox__box--hover'
-            : 'checkbox__box--idle',
-  ].join(' ');
-
   return (
     <label
       htmlFor={inputId}
       className={[
         'checkbox',
-        isDisabled ? 'checkbox--disabled' : '',
+        isDisabled    ? 'checkbox--disabled'    : '',
+        // Static state overrides for Storybook docs only
+        state === 'hover' ? 'checkbox--static-hover' : '',
+        state === 'press' ? 'checkbox--static-press' : '',
         className || '',
       ].filter(Boolean).join(' ')}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
     >
       <input
         id={inputId}
@@ -84,32 +56,31 @@ export function Checkbox({
         onChange={handleChange}
       />
 
-      <span className={boxClass} aria-hidden="true">
+      <span className="checkbox__box" aria-hidden="true">
         {/* Checked idle + disabled: flat image */}
-        {isChecked && (isIdle || isDisabled) && (
+        {isChecked && (!state || state === 'idle' || state === 'disabled') && (
           <img
             alt=""
             className="checkbox__img"
             src={isDisabled ? imgCheckedDisabled : imgCheckedIdle}
           />
         )}
-        {/* Checked hover + press: image with bleed for focus ring */}
-        {isChecked && (isHover || isPress) && (
+        {/* Checked hover: image with bleed */}
+        {isChecked && state === 'hover' && (
           <span className="checkbox__img-bleed">
-            <img
-              alt=""
-              className="checkbox__img"
-              src={isPress ? imgCheckedPress : imgCheckedHover}
-            />
+            <img alt="" className="checkbox__img" src={imgCheckedHover} />
+          </span>
+        )}
+        {/* Checked press: image with bleed */}
+        {isChecked && state === 'press' && (
+          <span className="checkbox__img-bleed">
+            <img alt="" className="checkbox__img" src={imgCheckedPress} />
           </span>
         )}
       </span>
 
       <span className="checkbox__label-group">
-        <span className={[
-          'checkbox__label',
-          isDisabled ? 'checkbox__label--disabled' : '',
-        ].filter(Boolean).join(' ')}>
+        <span className={['checkbox__label', isDisabled ? 'checkbox__label--disabled' : ''].filter(Boolean).join(' ')}>
           {label}
         </span>
         {required && (

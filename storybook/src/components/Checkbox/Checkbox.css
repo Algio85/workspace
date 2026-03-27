@@ -13,6 +13,7 @@
 .checkbox--disabled {
   opacity:  0.5;
   cursor:   not-allowed;
+  pointer-events: none;
 }
 
 /* ─── Hide native input ───────────────────────────────────────────────────── */
@@ -48,6 +49,9 @@
   position:       relative;
   border-radius:  var(--tao-radius-sm);
   box-sizing:     border-box;
+  /* Base idle state */
+  background-color: var(--tao-surface-neutral-subtlest);
+  border:           1px solid var(--tao-border-default);
   /* Motion tokens */
   transition:
     background-color var(--tao-duration-fast) var(--tao-easing-ease-out),
@@ -55,35 +59,44 @@
     box-shadow       var(--tao-duration-fast) var(--tao-easing-ease-out);
 }
 
-/* Unchecked idle */
-.checkbox__box--idle {
-  background-color: var(--tao-surface-neutral-subtlest);
-  border:           1px solid var(--tao-border-default);
-}
-
-/* Unchecked hover */
-.checkbox__box--hover {
+/* ── Unchecked hover — CSS driven, no JS ───────────────────────────────────── */
+.checkbox:not(.checkbox--disabled):hover .checkbox__box {
   background-color: var(--tao-surface-neutral-subtle);
   border:           1px solid var(--tao-border-strong);
   box-shadow:       0px 0px 0px 2px rgba(41, 105, 240, 0.3);
 }
 
-/* Unchecked press */
-.checkbox__box--press {
+/* ── Unchecked press — CSS driven, no JS ───────────────────────────────────── */
+.checkbox:not(.checkbox--disabled):active .checkbox__box {
   background-color: var(--tao-surface-neutral-default);
   border:           1px solid var(--tao-border-strong);
   box-shadow:       0px 0px 0px 2px rgba(41, 105, 240, 0.3);
 }
 
-/* Unchecked disabled */
-.checkbox__box--disabled {
+/* ── Unchecked disabled ─────────────────────────────────────────────────────── */
+.checkbox--disabled .checkbox__box {
   background-color: var(--tao-state-disabled-bg);
   border:           none;
 }
 
-/* Checked — image fills the box */
-.checkbox__box--checked {
-  border: none;
+/* ── Checked — image fills the box ─────────────────────────────────────────── */
+.checkbox__input:checked ~ .checkbox__box {
+  background-color: transparent;
+  border:           none;
+}
+
+/* ─── Static state overrides for Storybook docs ──────────────────────────── */
+
+.checkbox--static-hover .checkbox__box {
+  background-color: var(--tao-surface-neutral-subtle) !important;
+  border:           1px solid var(--tao-border-strong) !important;
+  box-shadow:       0px 0px 0px 2px rgba(41, 105, 240, 0.3) !important;
+}
+
+.checkbox--static-press .checkbox__box {
+  background-color: var(--tao-surface-neutral-default) !important;
+  border:           1px solid var(--tao-border-strong) !important;
+  box-shadow:       0px 0px 0px 2px rgba(41, 105, 240, 0.3) !important;
 }
 
 /* ─── Image assets ────────────────────────────────────────────────────────── */
