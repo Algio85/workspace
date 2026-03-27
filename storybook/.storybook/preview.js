@@ -1,3 +1,5 @@
+import '../src/tokens/tokens.css';
+
 /** @type { import('@storybook/react').Preview } */
 const preview = {
   parameters: {
@@ -16,5 +18,4 @@ const preview = {
     },
   },
 };
-
 export default preview;

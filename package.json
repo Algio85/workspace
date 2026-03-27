@@ -6,12 +6,12 @@
   "scripts": {
     "generate-shades": "node scripts/generate-shades.js",
     "build-tokens": "cd style-dictionary && style-dictionary build --config config.cjs",
+    "sync-tokens": "cp tokens/base/shades.json storybook/src/tokens/shades.json && cp tokens/semantic/*.json storybook/src/tokens/semantic/ && cp build/css/tokens.css storybook/src/tokens/tokens.css",
     "build": "npm run generate-shades && npm run build-tokens && npm run sync-tokens",
     "build-plugin": "node scripts/build-plugin.js",
     "storybook": "cd storybook && npm run storybook",
     "storybook:build": "cd storybook && npm run build-storybook",
-    "pull-from-figma": "node --env-file=.env scripts/pull-from-figma.js",
-    "sync-tokens": "cp tokens/base/shades.json storybook/src/tokens/shades.json && cp tokens/semantic/*.json storybook/src/tokens/semantic/"
+    "pull-from-figma": "node --env-file=.env scripts/pull-from-figma.js"
   },
   "devDependencies": {
     "@figma/code-connect": "^1.4.2",

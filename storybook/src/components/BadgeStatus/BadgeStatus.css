@@ -1,0 +1,71 @@
+/* ─── BadgeStatus component ──────────────────────────────────────────────────
+   All values from Figma node 118:448 via Figma MCP.
+   Token layer: --tao-* CSS custom properties.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.badge-status {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--tao-spacing-xxs, 4px);
+  padding:         var(--tao-spacing-xxs, 4px) var(--tao-spacing-xs, 8px);
+  border-radius:   var(--tao-radius-md, 8px);
+  font-family:     'DM Sans', sans-serif;
+  font-size:       11px;
+  font-weight:     700;
+  line-height:     1.4;
+  white-space:     nowrap;
+}
+
+.badge-status__icon {
+  display:     inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color:       inherit;
+}
+
+/* ─── Color variants ──────────────────────────────────────────────────────── */
+
+.badge-status--neutral {
+  background-color: var(--tao-surface-neutral-subtle,    #e2e2e2);
+  color:            var(--tao-text-default,              #363636);
+}
+
+.badge-status--brand-1 {
+  background-color: var(--tao-surface-brand-1-subtlest,  #cff6ff);
+  color:            var(--tao-text-brand-1,              #0542c9);
+}
+
+.badge-status--brand-2 {
+  background-color: var(--tao-surface-brand-2-subtlest,  #e1efff);
+  color:            var(--tao-text-brand-2,              #412ecf);
+}
+
+.badge-status--brand-3 {
+  background-color: var(--tao-surface-brand-3-subtlest,  #f8e6ff);
+  color:            var(--tao-text-brand-3,              #6305cc);
+}
+
+.badge-status--success {
+  background-color: var(--tao-surface-news-subtlest,     #ceffd6);
+  color:            var(--tao-text-news,                 #006c0f);
+}
+
+.badge-status--danger {
+  background-color: var(--tao-surface-danger-subtlest,   #ffdace);
+  color:            var(--tao-text-danger,               #ad0000);
+}
+
+.badge-status--alert {
+  background-color: var(--tao-surface-alert-subtlest,    #ffe0c3);
+  color:            var(--tao-text-alert,                #a40000);
+}
+
+.badge-status--info {
+  background-color: var(--tao-surface-info-subtlest,     #ffe9c1);
+  color:            var(--tao-text-info,                 #903400);
+}
+
+.badge-status--ai {
+  background-color: var(--tao-surface-ai-subtlest,       #cffff9);
+  color:            var(--tao-text-ai,                   #00665c);
+}

@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_c6139f777b34dc8",
-    "story-ui": "npx @tpitre/story-ui start --port 4001",
-    "storybook-with-ui": "concurrently \"npm run storybook\" \"npm run story-ui\" \"sleep 5 && open http://localhost:6006\","
-  },
+  "storybook": "storybook dev -p 6006",
+  "build-storybook": "storybook build",
+  "chromatic": "npx chromatic --project-token=chpt_c6139f777b34dc8",
+  "story-ui": "npx @tpitre/story-ui start --port 4001",
+  "storybook-with-ui": "concurrently \"npm run storybook\" \"npm run story-ui\" \"sleep 5 && open http://localhost:6006\""
+},
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "react": "^18.2.0",

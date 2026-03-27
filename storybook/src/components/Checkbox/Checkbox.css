@@ -1,0 +1,143 @@
+/* ─── Checkbox ─────────────────────────────────────────────────────────────── */
+
+.checkbox {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--tao-spacing-xs);
+  cursor:      pointer;
+  font-family: 'DM Sans', sans-serif;
+  position:    relative;
+  user-select: none;
+}
+
+.checkbox--disabled {
+  opacity:  0.5;
+  cursor:   not-allowed;
+}
+
+/* ─── Hide native input ───────────────────────────────────────────────────── */
+
+.checkbox__input {
+  position:    absolute;
+  width:        1px;
+  height:       1px;
+  opacity:      0;
+  margin:       0;
+  padding:      0;
+  border:       0;
+  overflow:     hidden;
+  clip:         rect(0 0 0 0);
+  white-space:  nowrap;
+  appearance:          none;
+  -webkit-appearance:  none;
+}
+
+/* ─── Focus visible — keyboard navigation ─────────────────────────────────── */
+
+.checkbox__input:focus-visible ~ .checkbox__box {
+  box-shadow: 0 0 0 2px var(--tao-border-focus);
+  outline:    none;
+}
+
+/* ─── Custom box ──────────────────────────────────────────────────────────── */
+
+.checkbox__box {
+  flex-shrink:    0;
+  width:          16px;
+  height:         16px;
+  position:       relative;
+  border-radius:  var(--tao-radius-sm);
+  box-sizing:     border-box;
+  /* Motion tokens */
+  transition:
+    background-color var(--tao-duration-fast) var(--tao-easing-ease-out),
+    border-color     var(--tao-duration-fast) var(--tao-easing-ease-out),
+    box-shadow       var(--tao-duration-fast) var(--tao-easing-ease-out);
+}
+
+/* Unchecked idle */
+.checkbox__box--idle {
+  background-color: var(--tao-surface-neutral-subtlest);
+  border:           1px solid var(--tao-border-default);
+}
+
+/* Unchecked hover */
+.checkbox__box--hover {
+  background-color: var(--tao-surface-neutral-subtle);
+  border:           1px solid var(--tao-border-strong);
+  box-shadow:       0px 0px 0px 2px rgba(41, 105, 240, 0.3);
+}
+
+/* Unchecked press */
+.checkbox__box--press {
+  background-color: var(--tao-surface-neutral-default);
+  border:           1px solid var(--tao-border-strong);
+  box-shadow:       0px 0px 0px 2px rgba(41, 105, 240, 0.3);
+}
+
+/* Unchecked disabled */
+.checkbox__box--disabled {
+  background-color: var(--tao-state-disabled-bg);
+  border:           none;
+}
+
+/* Checked — image fills the box */
+.checkbox__box--checked {
+  border: none;
+}
+
+/* ─── Image assets ────────────────────────────────────────────────────────── */
+
+.checkbox__img {
+  position:   absolute;
+  display:    block;
+  width:      100%;
+  height:     100%;
+  max-width:  none;
+  top:        0;
+  left:       0;
+}
+
+/* Hover/press checked — image bleeds by 12.5% to show focus ring */
+.checkbox__img-bleed {
+  position: absolute;
+  inset:    -12.5%;
+  display:  block;
+}
+
+.checkbox__img-bleed .checkbox__img {
+  position: static;
+  width:    100%;
+  height:   100%;
+}
+
+/* ─── Label group ─────────────────────────────────────────────────────────── */
+
+.checkbox__label-group {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--tao-spacing-xxs);
+  overflow:    hidden;
+  white-space: nowrap;
+}
+
+.checkbox__label {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color:       var(--tao-text-default);
+  transition:  color var(--tao-duration-fast) var(--tao-easing-ease-out);
+}
+
+.checkbox__label--disabled {
+  color: var(--tao-state-disabled-text);
+}
+
+.checkbox__required {
+  font-family: 'DM Sans', sans-serif;
+  font-size:   12px;
+  font-weight: 400;
+  line-height: normal;
+  color:       var(--tao-text-subtle);
+}
