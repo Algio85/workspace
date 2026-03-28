@@ -1,8 +1,21 @@
 {
-  "name": "tao",
+  "name": "@algio85/tao",
   "version": "1.0.0",
-  "description": "Ai driven design system & workflow",
+  "description": "AI driven design system & workflow — OKLCH design tokens",
   "type": "module",
+  "main": "build/js/tokens.js",
+  "exports": {
+    ".": "./build/js/tokens.js",
+    "./css": "./build/css/tokens.css",
+    "./json": "./build/json/tokens.json"
+  },
+  "files": [
+    "build/",
+    "tokens/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "generate-shades": "node scripts/generate-shades.js",
     "build-tokens": "cd style-dictionary && style-dictionary build --config config.cjs",
