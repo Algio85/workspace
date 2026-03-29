@@ -48,7 +48,7 @@ function generateShades(hex) {
 
 // ─── Default base colors ──────────────────────────────────────────────────────
 
-const DEFAULT_BASE = Object.fromEntries(
+export const DEFAULT_BASE = Object.fromEntries(
   Object.entries(defaultTokens.color.brand).map(([name, token]) => [name, token.value])
 );
 
@@ -152,6 +152,7 @@ export function ColorPalette({
   showBrandToken = true,
   baseColors = DEFAULT_BASE,
   onColorChange,
+  onReset,
 }) {
   const [liveColors, setLiveColors] = useState(baseColors);
 
@@ -179,8 +180,22 @@ export function ColorPalette({
         marginBottom: 40, padding: '16px 20px',
         background: '#161616', borderRadius: 10, border: '1px solid #222',
       }}>
-        <div style={{ width: '100%', fontFamily: FONT, fontSize: 9, color: '#444', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
-          Base colors — edit to live update shades
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+          <span style={{ fontFamily: FONT, fontSize: 9, color: '#444', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            Base colors — edit to live update shades across all stories
+          </span>
+          {onReset && (
+            <button
+              onClick={() => { setLiveColors(DEFAULT_BASE); onReset(); }}
+              style={{
+                fontFamily: FONT, fontSize: 9, color: '#555', background: 'none',
+                border: '1px solid #333', borderRadius: 4, padding: '2px 8px',
+                cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em',
+              }}
+            >
+              Reset to defaults
+            </button>
+          )}
         </div>
         {colors.map(name => (
           <div key={name} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>

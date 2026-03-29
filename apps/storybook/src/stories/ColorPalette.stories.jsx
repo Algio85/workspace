@@ -1,9 +1,14 @@
 import React from 'react';
 import { useGlobals } from '@storybook/preview-api';
-import { ColorPalette } from '../components/ColorPalette';
+import { ColorPalette, DEFAULT_BASE } from '../components/ColorPalette';
 import shadesTokens from '../tokens/shades.json';
 
 const ALL_COLORS = Object.keys(shadesTokens.color.shade);
+
+const PALETTE_KEYS = [
+  'palette-1','palette-2','palette-3','palette-4','palette-5','palette-6',
+  'palette-7','palette-8','palette-9','palette-10','palette-11',
+];
 
 const meta = {
   title: 'Foundations / Colors / Color Palette',
@@ -87,11 +92,25 @@ export default meta;
 export const FullPalette = {
   name: 'Full Palette',
   render: (args) => {
-    const [, updateGlobals] = useGlobals();
+    const [globals, updateGlobals] = useGlobals();
+
+    // Sync pickers from globals so they reflect current state when returning to this story
+    const currentColors = Object.fromEntries(
+      PALETTE_KEYS.map(k => [k, globals[k] || DEFAULT_BASE[k]])
+    );
+
+    const handleReset = () => {
+      updateGlobals(Object.fromEntries(
+        PALETTE_KEYS.map(k => [k, DEFAULT_BASE[k]])
+      ));
+    };
+
     return (
       <ColorPalette
         {...args}
+        baseColors={currentColors}
         onColorChange={(name, hex) => updateGlobals({ [name]: hex })}
+        onReset={handleReset}
       />
     );
   },

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useGlobals } from '@storybook/preview-api';
 import { applyTheme } from '../src/tokens/themeEngine.js';
 
@@ -14,17 +14,12 @@ export function ThemeDecorator(Story, context) {
     PALETTE_KEYS.map(k => [k, globals[k]]).filter(([, v]) => v)
   );
 
-  useEffect(() => {
-    applyTheme({
-      palettes,
-      typescaleRatio: globals.typescale    || '1.2',
-      densityFactor:  globals.density      || '1',
-    });
-  }, [
-    ...PALETTE_KEYS.map(k => globals[k]),
-    globals.typescale,
-    globals.density,
-  ]);
+  // Apply synchronously on every render so CSS persists across story navigation
+  applyTheme({
+    palettes,
+    typescaleRatio: globals.typescale || '1.2',
+    densityFactor:  globals.density   || '1',
+  });
 
   return <Story {...context} />;
 }
