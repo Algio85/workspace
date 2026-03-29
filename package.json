@@ -1,17 +1,9 @@
 {
   "name": "tao-workspace",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "apps/portfolio"
-  ],
-  "overrides": {
-    "kleur": "^4.1.5"
-  },
   "scripts": {
-    "build:tao": "npm run build --workspace=packages/tao",
-    "storybook": "npm run storybook --workspace=apps/storybook",
-    "dev:portfolio": "npm run dev --workspace=apps/portfolio",
-    "build:portfolio": "npm run build --workspace=apps/portfolio"
+    "build:tao": "npm run build --prefix packages/tao",
+    "dev:portfolio": "npm run dev --prefix apps/portfolio",
+    "build:portfolio": "npm run build --prefix apps/portfolio"
   }
 }
