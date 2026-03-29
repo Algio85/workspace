@@ -3,7 +3,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/portfolio"
   ],
   "scripts": {
     "build:tao": "npm run build --workspace=packages/tao",
