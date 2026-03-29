@@ -45,35 +45,36 @@ const COMMANDS = [
   {
     group: 'Token pipeline',
     items: [
-      { cmd: 'npm run build',         desc: 'Generate shades → build tokens → sync to Storybook' },
+      { cmd: 'npm run build',           desc: 'Generate shades → build tokens → sync to Storybook (run from packages/tao)' },
       { cmd: 'npm run generate-shades', desc: 'Regenerate OKLCH color shades from base colors' },
-      { cmd: 'npm run build-tokens',  desc: 'Run StyleDictionary — outputs build/css/tokens.css' },
-      { cmd: 'npm run sync-tokens',   desc: 'Copy tokens to storybook/src/tokens/' },
-      { cmd: 'npm run build-plugin',  desc: 'Bundle Figma plugin — outputs figma-plugin/ui.html' },
+      { cmd: 'npm run build-tokens',    desc: 'Run Style Dictionary — outputs build/css/tokens.css' },
+      { cmd: 'npm run sync-tokens',     desc: 'Copy tokens to apps/storybook/src/tokens/' },
+      { cmd: 'npm run build-plugin',    desc: 'Bundle Figma plugin — outputs figma-plugin/ui.html' },
     ],
   },
   {
     group: 'Storybook',
     items: [
-      { cmd: 'npm run storybook',          desc: 'Start Storybook on port 6006 (run from root)' },
-      { cmd: 'npm run storybook-with-ui',  desc: 'Start Storybook + Story UI MCP server together' },
-      { cmd: 'npm run chromatic',          desc: 'Deploy to Chromatic for visual testing' },
+      { cmd: 'npm run storybook',         desc: 'Start Storybook on port 6006 (run from apps/storybook)' },
+      { cmd: 'npm run storybook-with-ui', desc: 'Start Storybook + Story UI MCP server together' },
+      { cmd: 'npm run chromatic',         desc: 'Deploy to Chromatic for visual testing' },
     ],
   },
   {
-    group: 'Figma',
+    group: 'Portfolio',
     items: [
-      { cmd: 'npm run pull-from-figma', desc: 'Pull variables from Figma into token files' },
+      { cmd: 'npm run dev',   desc: 'Start Astro dev server (run from apps/portfolio)' },
+      { cmd: 'npm run build', desc: 'Build portfolio for production — auto-deployed by Vercel on push' },
     ],
   },
 ];
 
 const WORKFLOW = [
-  { step: '01', title: 'Edit tokens',      desc: 'Edit files in tokens/base/ or tokens/semantic/' },
-  { step: '02', title: 'Build',            desc: 'npm run build — compiles all tokens to CSS + JSON' },
-  { step: '03', title: 'Push to Figma',    desc: 'Open Tao Token Pusher plugin → push variables + styles' },
-  { step: '04', title: 'Build components', desc: 'Paste Figma link here → Claude generates component + CSS + story' },
-  { step: '05', title: 'Commit + deploy',  desc: 'git push → Chromatic deploys automatically via GitHub Actions' },
+  { step: '01', title: 'Edit tokens',      desc: 'Edit JSON files in packages/tao/tokens/ — base or semantic layer' },
+  { step: '02', title: 'Build + push',     desc: 'npm run build → tokens compiled. Tao Token Pusher plugin → Figma variables updated' },
+  { step: '03', title: 'Design in Figma',  desc: 'Design components using tao variables — token names are the same in code and Figma' },
+  { step: '04', title: 'Claude codes it',  desc: 'Claude reads the Figma component via MCP → generates code using matching semantic token names' },
+  { step: '05', title: 'Commit + deploy',  desc: 'GitHub Desktop push → Chromatic (Storybook) + Vercel (portfolio) auto-deploy' },
 ];
 
 const TOKEN_LAYERS = [
@@ -149,12 +150,12 @@ export function Introduction() {
         </div>
         <div>
           <p style={{ fontFamily: FONT, fontSize: 16, fontWeight: 300, lineHeight: 1.7, color: theme.text.subtle, margin: '0 0 ' + theme.spacing.lg + 'px' }}>
-            A token-based design system where AI is a core part of the workflow —
-            not just a tool, but a collaborator. Built with Style Dictionary,
-            Figma, React, and Claude.
+            A token-based design system where tao is the single source of truth —
+            Figma pulls from it, apps consume it, and Claude uses it to generate
+            components. Built with Style Dictionary, Figma, React, Astro, and Claude.
           </p>
           <div style={{ display: 'flex', gap: theme.spacing.xs, flexWrap: 'wrap' }}>
-            {['Style Dictionary', 'Figma', 'React', 'Chromatic', 'OKLCH', 'Phosphor'].map(tag => (
+            {['Style Dictionary', 'Figma', 'React', 'Astro', 'Vercel', 'Chromatic', 'OKLCH', 'Phosphor'].map(tag => (
               <span key={tag} style={{
                 fontFamily: FONT, fontSize: 10, color: theme.text.subtlest,
                 background: theme.bg.surface, border: '1px solid ' + theme.border.subtle,
