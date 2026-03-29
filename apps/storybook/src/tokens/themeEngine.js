@@ -1,4 +1,4 @@
-// ─── OKLCH colour math (ported from generate-shades.js) ──────────────────────
+// ─── OKLCH colour math ────────────────────────────────────────────────────────
 
 function hexToLinear(c) {
   c = c / 255;
@@ -18,6 +18,7 @@ function linearToOklab(r, g, b) {
 }
 
 function hexToOklch(hex) {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return null;
   const r = hexToLinear(parseInt(hex.slice(1, 3), 16));
   const g = hexToLinear(parseInt(hex.slice(3, 5), 16));
   const b = hexToLinear(parseInt(hex.slice(5, 7), 16));
@@ -48,11 +49,13 @@ function oklchToHex(L, C, H) {
 }
 
 function generateShades(baseHex) {
-  const { C, H } = hexToOklch(baseHex);
-  const L_MAX = 0.97, L_MIN = 0.10, NUM_SHADES = 16;
+  const oklch = hexToOklch(baseHex);
+  if (!oklch) return null;
+  const { C, H } = oklch;
+  const L_MAX = 0.97, L_MIN = 0.10;
   const shades = {};
-  for (let i = 1; i <= NUM_SHADES; i++) {
-    const t = (i - 1) / (NUM_SHADES - 1);
+  for (let i = 1; i <= 16; i++) {
+    const t = (i - 1) / 15;
     const L = L_MAX + t * (L_MIN - L_MAX);
     const chromaScale = 1 - Math.pow(2 * t - 1, 4) * 0.5;
     shades[i] = oklchToHex(L, C * chromaScale, H);
@@ -94,14 +97,25 @@ function generateSpacing(factor) {
 
 // ─── CSS injection ────────────────────────────────────────────────────────────
 
-export function applyTheme({ brandColor, typescaleRatio, densityFactor }) {
+/**
+ * Apply theme overrides to the document.
+ * @param {Object} options
+ * @param {Object} [options.palettes]      — { 'palette-1': '#hex', ... }
+ * @param {string} [options.typescaleRatio] — e.g. '1.2'
+ * @param {string} [options.densityFactor]  — e.g. '1'
+ */
+export function applyTheme({ palettes, typescaleRatio, densityFactor }) {
   const overrides = {};
 
-  // Brand palette shades (palette-1)
-  if (brandColor) {
-    const shades = generateShades(brandColor);
-    Object.entries(shades).forEach(([i, hex]) => {
-      overrides[`--tao-color-shade-palette-1-${i}`] = hex;
+  // All palette shades
+  if (palettes) {
+    Object.entries(palettes).forEach(([paletteName, baseHex]) => {
+      if (!baseHex) return;
+      const shades = generateShades(baseHex);
+      if (!shades) return;
+      Object.entries(shades).forEach(([i, hex]) => {
+        overrides[`--tao-color-shade-${paletteName}-${i}`] = hex;
+      });
     });
   }
 

@@ -2,24 +2,20 @@ import '../src/tokens/tokens.css';
 import { ThemeDecorator } from './ThemeDecorator.jsx';
 
 export const globalTypes = {
-  brandColor: {
-    name: 'Brand colour',
-    defaultValue: '#2563EB',
-    toolbar: {
-      icon: 'paintbrush',
-      items: [
-        { value: '#2563EB', title: 'Blue'   },
-        { value: '#4F46E5', title: 'Indigo' },
-        { value: '#7C3AED', title: 'Purple' },
-        { value: '#0D9488', title: 'Teal'   },
-        { value: '#16A34A', title: 'Green'  },
-        { value: '#DC2626', title: 'Red'    },
-        { value: '#D97706', title: 'Amber'  },
-        { value: '#DB2777', title: 'Pink'   },
-      ],
-      dynamicTitle: true,
-    },
-  },
+  // Palette globals — no toolbar, controlled from the Color Palette story
+  'palette-1':  { defaultValue: '#2563EB' },
+  'palette-2':  { defaultValue: '#4F46E5' },
+  'palette-3':  { defaultValue: '#7C3AED' },
+  'palette-4':  { defaultValue: '#DB2777' },
+  'palette-5':  { defaultValue: '#DC2626' },
+  'palette-6':  { defaultValue: '#EA580C' },
+  'palette-7':  { defaultValue: '#D97706' },
+  'palette-8':  { defaultValue: '#16A34A' },
+  'palette-9':  { defaultValue: '#0D9488' },
+  'palette-10': { defaultValue: '#0891B2' },
+  'palette-11': { defaultValue: '#525252' },
+
+  // Toolbar globals
   typescale: {
     name: 'Type scale',
     defaultValue: '1.2',
@@ -54,12 +50,12 @@ export const globalTypes = {
     toolbar: {
       icon: 'star',
       items: [
-        { value: 'thin',     title: 'Thin'     },
-        { value: 'light',    title: 'Light'    },
-        { value: 'regular',  title: 'Regular'  },
-        { value: 'bold',     title: 'Bold'     },
-        { value: 'fill',     title: 'Fill'     },
-        { value: 'duotone',  title: 'Duotone'  },
+        { value: 'thin',    title: 'Thin'    },
+        { value: 'light',   title: 'Light'   },
+        { value: 'regular', title: 'Regular' },
+        { value: 'bold',    title: 'Bold'    },
+        { value: 'fill',    title: 'Fill'    },
+        { value: 'duotone', title: 'Duotone' },
       ],
       dynamicTitle: true,
     },
