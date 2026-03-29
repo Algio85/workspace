@@ -1,1 +1,6 @@
-.env
+node_modules/
+packages/tao/build/
+packages/tao/.env
+apps/portfolio/.env
+dist/
+.DS_Store
