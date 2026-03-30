@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShadeCell, BrandTokenRow } from './ColorSwatch';
 import defaultTokens from '../tokens/shades.json';
 
@@ -156,6 +156,12 @@ export function ColorPalette({
 }) {
   const [liveColors, setLiveColors] = useState(baseColors);
 
+  // Sync local state when baseColors prop changes (globals reset or external update)
+  const baseColorsKey = Object.values(baseColors).join(',');
+  useEffect(() => {
+    setLiveColors(baseColors);
+  }, [baseColorsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleChange = (name, hex) => {
     setLiveColors(prev => ({ ...prev, [name]: hex }));
     onColorChange?.(name, hex);
@@ -186,7 +192,7 @@ export function ColorPalette({
           </span>
           {onReset && (
             <button
-              onClick={() => { setLiveColors(DEFAULT_BASE); onReset(); }}
+              onClick={() => onReset()}
               style={{
                 fontFamily: FONT, fontSize: 9, color: '#555', background: 'none',
                 border: '1px solid #333', borderRadius: 4, padding: '2px 8px',
