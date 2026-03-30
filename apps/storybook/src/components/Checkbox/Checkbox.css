@@ -11,7 +11,7 @@
 }
 
 .checkbox--disabled {
-  opacity:        0.5;
+  opacity:        var(--tao-opacity-48);
   cursor:         not-allowed;
   pointer-events: none;
 }
@@ -22,7 +22,7 @@
   position:    absolute;
   width:        1px;
   height:       1px;
-  opacity:      0;
+  opacity:      var(--tao-opacity-0);
   margin:       0;
   padding:      0;
   border:       0;
@@ -31,13 +31,6 @@
   white-space:  nowrap;
   appearance:          none;
   -webkit-appearance:  none;
-}
-
-/* ─── Focus visible ───────────────────────────────────────────────────────── */
-
-.checkbox__input:focus-visible ~ .checkbox__box {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tao-border-focus) 35%, transparent);
-  outline:    none;
 }
 
 /* ─── Custom box ──────────────────────────────────────────────────────────── */
@@ -53,8 +46,31 @@
   border:           1px solid var(--tao-border-default);
   transition:
     background-color var(--tao-duration-fast) var(--tao-easing-ease-out),
-    border-color     var(--tao-duration-fast) var(--tao-easing-ease-out),
-    box-shadow       var(--tao-duration-fast) var(--tao-easing-ease-out);
+    border-color     var(--tao-duration-fast) var(--tao-easing-ease-out);
+}
+
+/* ─── Focus / hover ring via ::before ────────────────────────────────────── */
+
+.checkbox__box::before {
+  content:       '';
+  position:      absolute;
+  inset:         -4px;
+  border-radius: calc(var(--tao-radius-sm, 4px) + 4px);
+  box-shadow:    0 0 0 3px var(--tao-border-focus);
+  opacity:       var(--tao-opacity-0);
+  pointer-events: none;
+  transition:    opacity var(--tao-duration-fast) var(--tao-easing-ease-out);
+}
+
+/* Hover ring */
+.checkbox:not(.checkbox--disabled):hover .checkbox__box::before {
+  opacity: var(--tao-opacity-24);
+}
+
+/* Focus ring — stronger, overrides hover */
+.checkbox__input:focus-visible ~ .checkbox__box::before {
+  opacity: var(--tao-opacity-32) !important;
+  outline: none;
 }
 
 /* ─── CSS checkmark ───────────────────────────────────────────────────────── */
@@ -67,7 +83,7 @@
   height:       9px;
   top:          1px;
   left:         4px;
-  border:       2px solid #fff;
+  border:       2px solid var(--tao-text-inverse);
   border-top:   none;
   border-left:  none;
   transform:    rotate(45deg);
@@ -89,14 +105,12 @@
 .checkbox:not(.checkbox--disabled):hover .checkbox__input:not(:checked) ~ .checkbox__box {
   background-color: var(--tao-surface-neutral-subtle);
   border-color:     var(--tao-border-strong);
-  box-shadow:       0 0 0 3px color-mix(in srgb, var(--tao-border-focus) 25%, transparent);
 }
 
 /* ─── Checked hover ───────────────────────────────────────────────────────── */
 
 .checkbox:not(.checkbox--disabled):hover .checkbox__input:checked ~ .checkbox__box {
   background-color: var(--tao-surface-brand-1-bold);
-  box-shadow:       0 0 0 3px color-mix(in srgb, var(--tao-border-focus) 25%, transparent);
 }
 
 /* ─── Unchecked press ─────────────────────────────────────────────────────── */
@@ -124,12 +138,14 @@
 .checkbox--static-hover .checkbox__input:not(:checked) ~ .checkbox__box {
   background-color: var(--tao-surface-neutral-subtle) !important;
   border-color:     var(--tao-border-strong) !important;
-  box-shadow:       0 0 0 3px color-mix(in srgb, var(--tao-border-focus) 25%, transparent) !important;
+}
+
+.checkbox--static-hover .checkbox__box::before {
+  opacity: var(--tao-opacity-24) !important;
 }
 
 .checkbox--static-hover .checkbox__input:checked ~ .checkbox__box {
   background-color: var(--tao-surface-brand-1-bold) !important;
-  box-shadow:       0 0 0 3px color-mix(in srgb, var(--tao-border-focus) 25%, transparent) !important;
 }
 
 .checkbox--static-press .checkbox__input:not(:checked) ~ .checkbox__box {
@@ -153,7 +169,7 @@
 
 .checkbox__label {
   font-family: 'DM Sans', sans-serif;
-  font-size:   13px;
+  font-size:   var(--tao-typography-size-sm);
   font-weight: 400;
   line-height: 1.4;
   color:       var(--tao-text-default);
@@ -166,7 +182,7 @@
 
 .checkbox__required {
   font-family: 'DM Sans', sans-serif;
-  font-size:   12px;
+  font-size:   var(--tao-typography-size-xs);
   font-weight: 400;
   color:       var(--tao-text-subtle);
 }
