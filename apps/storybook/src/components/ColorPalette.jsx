@@ -192,7 +192,7 @@ export function ColorPalette({
           </span>
           {onReset && (
             <button
-              onClick={() => onReset()}
+              onClick={() => { setLiveColors(DEFAULT_BASE); onReset?.(); }}
               style={{
                 fontFamily: FONT, fontSize: 9, color: '#555', background: 'none',
                 border: '1px solid #333', borderRadius: 4, padding: '2px 8px',
