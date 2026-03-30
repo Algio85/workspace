@@ -84,6 +84,9 @@ function ColorEditor({ colorName, hex, onChange }) {
   const [input, setInput] = useState(hex);
   const isValid = /^#[0-9a-fA-F]{6}$/.test(input);
 
+  // Sync internal input when hex prop changes externally (e.g. reset)
+  useEffect(() => { setInput(hex); }, [hex]);
+
   const handleChange = (val) => {
     setInput(val);
     if (/^#[0-9a-fA-F]{6}$/.test(val)) onChange(val);
